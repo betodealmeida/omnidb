@@ -29,3 +29,4 @@ omnidb = "omnidb.app:main"
 
 [project.entry-points."sqlalchemy.dialects"]
 "postgresql.omni" = "omnidb.dialects:OmniPGDialect"
+"mssql.omni" = "omnidb.dialects:OmniMSDialect"

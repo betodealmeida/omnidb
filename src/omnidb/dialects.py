@@ -2,6 +2,7 @@ from typing import Any, TypedDict
 from urllib.parse import quote
 
 import requests
+from sqlalchemy.dialects.mssql.base import MSDialect
 from sqlalchemy.dialects.postgresql.base import PGDialect
 from sqlalchemy.engine.base import Connection as SqlaConnection
 from sqlalchemy.engine.url import URL
@@ -172,3 +173,13 @@ class OmniPGDialect(DialectOverride, PGDialect):
     """
     PostgreSQL dialect with overrides.
     """
+
+    database_name = "PostgreSQL"
+
+
+class OmniMSDialect(DialectOverride, MSDialect):
+    """
+    Microsoft SQL Server dialect with overrides.
+    """
+
+    database_name = "Microsoft SQL Server"

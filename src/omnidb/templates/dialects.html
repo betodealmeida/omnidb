@@ -18,6 +18,9 @@
     </style>
 </head>
 <body>
+    <h1>Omni Database</h1>
+    <p>A one-stop shop for all your Apache Superset troubleshooting needs.</p>
+
     <pre>
          O_      __)(
        ,'  `.   (_".`.
@@ -40,12 +43,15 @@
      |                    |
    _\|_\|_\/(__\__)\__\//_|(_
     </pre>
-    <h1>Available dialects</h1>
-    <ul>
-        {% for uri in uris %}
-        <li>{{ uri }}</li>
-        {% endfor %}
-    </ul>
+
+    <h2>Available dialects</h2>
+
+    <dl>
+    {% for database_name, uri in uris.items() %}
+        <dt>{{ database_name }}</dt>
+        <dd>{{ uri }}</dd>
+    {% endfor %}
+    </dl>
 </body>
 </html>
 

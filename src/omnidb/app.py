@@ -79,10 +79,12 @@ async def home() -> str:
         )
     )
     base_url = URL(url_for("home", _external=True))
-    uris = [
-        str(base_url.with_scheme(f"{dialect.name}+{dialect.driver}"))
+    uris = {
+        dialect.database_name: str(
+            base_url.with_scheme(f"{dialect.name}+{dialect.driver}")
+        )
         for dialect in sqlalchemy_dialects.values()
-    ]
+    }
 
     return await render_template("dialects.html", uris=uris)
 
