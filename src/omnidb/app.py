@@ -1,4 +1,7 @@
-from dataclasses import dataclass
+import json
+from dataclasses import asdict, dataclass
+from datetime import datetime, timezone
+from enum import Enum
 from inspect import getmembers, isclass
 from typing import Any
 from urllib.parse import unquote
@@ -39,10 +42,25 @@ class Results:
     rows: list[tuple[Any, ...]]
 
 
+class QueryState(str, Enum):
+    """
+    Different states of a query.
+    """
+
+    ACCEPTED = "ACCEPTED"
+    FINISHED = "FINISHED"
+    FAILED = "FAILED"
+
+
 @dataclass
 class QueryWithResults(Query):
     executed_sql: str
     results: list[Results]
+
+    started: datetime | None = None
+    finished: datetime | None = None
+
+    state: QueryState = QueryState.ACCEPTED
 
 
 async def execute_sql(statements: list[str]) -> list[Results]:
@@ -63,6 +81,59 @@ async def execute_sql(statements: list[str]) -> list[Results]:
                 )
 
     return results
+
+
+async def save_query(query: QueryWithResults) -> None:
+    """
+    Save the query to the database.
+    """
+    database = app.config["DATABASE"]
+    async with aiosqlite.connect(database) as db:
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS queries (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                started TIMESTAMP,
+                finished TIMESTAMP,
+                state TEXT,
+                dialect TEXT,
+                submitted_sql TEXT,
+                executed_sql TEXT,
+                results JSON 
+            )
+            """
+        )
+        await db.execute(
+            """
+            INSERT INTO queries (
+                started,
+                finished,
+                state,
+                dialect,
+                submitted_sql,
+                executed_sql,
+                results
+            ) VALUES (
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?
+            )
+            """,
+            (
+                query.started.isoformat(),
+                query.finished.isoformat(),
+                query.state,
+                query.dialect,
+                query.submitted_sql,
+                query.executed_sql,
+                json.dumps([asdict(results) for results in query.results]),
+            ),
+        )
+        await db.commit()
 
 
 @app.route("/", methods=["GET"])
@@ -130,26 +201,76 @@ async def get_table(table: str) -> Response:
     return jsonify({"results": {"columns": columns}})
 
 
+@app.route("/queries", methods=["GET"])
+async def get_queries() -> Response:
+    """
+    Get all queries.
+    """
+    database = app.config["DATABASE"]
+    async with aiosqlite.connect(database) as db:
+        db.row_factory = aiosqlite.Row
+        async with db.execute("SELECT * FROM queries ORDER BY finished DESC") as cursor:
+            queries = [
+                {
+                    "id": row["id"],
+                    "started": datetime.fromisoformat(row["started"]),
+                    "finished": datetime.fromisoformat(row["finished"]),
+                    "state": row["state"],
+                    "dialect": row["dialect"],
+                    "submitted_sql": row["submitted_sql"],
+                    "executed_sql": row["executed_sql"],
+                    "results": json.loads(row["results"]),
+                }
+                for row in await cursor.fetchall()
+            ]
+
+    return await render_template("queries.html", queries=queries)
+
+
 @app.route("/queries", methods=["POST"])
 @validate_request(Query)
 @validate_response(QueryWithResults)
-async def queries(data: Query) -> QueryWithResults:
+async def create_query(data: Query) -> QueryWithResults:
     """
     Run a query.
     """
-    statements = sqlglot.transpile(
-        data.submitted_sql,
-        read=data.dialect,
-        write="sqlite",
-    )
-    results = await execute_sql(statements)
+    started = datetime.now(timezone.utc)
 
-    return QueryWithResults(
+    try:
+        statements = sqlglot.transpile(
+            data.submitted_sql,
+            read=data.dialect,
+            write="sqlite",
+        )
+    except Exception:
+        statements = []
+        state = QueryState.FAILED
+
+    if statements:
+        try:
+            results = await execute_sql(statements)
+            state = QueryState.FINISHED
+        except Exception:
+            results = []
+            state = QueryState.FAILED
+    else:
+        results = []
+
+    finished = datetime.now(timezone.utc)
+
+    query = QueryWithResults(
+        started=started,
+        finished=finished,
+        state=state,
         dialect=data.dialect,
         submitted_sql=data.submitted_sql,
-        executed_sql=";\n".join(statements),
+        executed_sql="\n".join(statement + ";" for statement in statements),
         results=results,
     )
+
+    await save_query(query)
+
+    return query
 
 
 def create_app(database: str) -> Quart:

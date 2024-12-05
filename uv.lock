@@ -447,8 +447,8 @@ requires-dist = [
     { name = "quart-schema", specifier = ">=0.20.0" },
     { name = "requests", specifier = ">=2.32.3" },
     { name = "ruff", specifier = ">=0.8.1" },
-    { name = "sqlalchemy", specifier = ">=2.0.36" },
-    { name = "sqlglot", specifier = ">=25.33.0" },
+    { name = "sqlalchemy", specifier = ">=1.4.54" },
+    { name = "sqlglot", specifier = ">=25.24.5" },
     { name = "uvicorn", specifier = ">=0.32.1" },
     { name = "yarl", specifier = ">=1.18.3" },
 ]

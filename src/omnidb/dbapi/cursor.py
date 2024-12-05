@@ -87,7 +87,9 @@ class Cursor:
 
         # apply parameters
         if parameters:
-            quoted_parameters = {key: quote(value) for key, value in parameters.items()}
+            quoted_parameters = {
+                key: quote(value, self.dialect) for key, value in parameters.items()
+            }
             operation %= quoted_parameters
 
         parsed = sqlglot.parse(operation, dialect=self.dialect)

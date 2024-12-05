@@ -2,6 +2,7 @@ from typing import Any, TypedDict
 from urllib.parse import quote
 
 import requests
+import sqlalchemy.types
 from sqlalchemy.dialects.mssql.base import MSDialect
 from sqlalchemy.dialects.postgresql.base import PGDialect
 from sqlalchemy.engine.base import Connection as SqlaConnection
@@ -30,6 +31,15 @@ class SQLAlchemyColumn(TypedDict):
     type: TypeEngine
     nullable: bool
     default: str | None
+
+
+class Constraint(TypedDict):
+    """
+    Type for `get_pk_constraint`.
+    """
+
+    constrained_columns: list[str]
+    name: str | None
 
 
 class DialectOverride:
@@ -106,6 +116,17 @@ class DialectOverride:
 
         return payload["results"]
 
+    def get_view_names(
+        self,
+        connection: SqlaConnection,
+        schema: str | None = None,
+        **kw: Any,
+    ) -> list[str]:
+        """
+        Get all view names.
+        """
+        return []
+
     def get_columns(
         self,
         connection: SqlaConnection,
@@ -125,7 +146,7 @@ class DialectOverride:
         return [
             {
                 "name": column["name"],
-                "type": column["type"],
+                "type": getattr(sqlalchemy.types, column["type"]),
                 "nullable": column["nullable"],
                 "default": column["default"],
             }
@@ -137,7 +158,7 @@ class DialectOverride:
         Not really.
         """
 
-    def get_schema_names(self, connection: SqlaConnection, **kw: Any):
+    def get_schema_names(self, connection: SqlaConnection, **kw: Any) -> list[str]:
         """
         Return the list of schemas.
         """
@@ -149,7 +170,7 @@ class DialectOverride:
         table_name: str,
         schema: str | None = None,
         **kw: Any,
-    ):
+    ) -> Constraint:
         return {"constrained_columns": [], "name": None}
 
     def get_foreign_keys(
@@ -158,7 +179,7 @@ class DialectOverride:
         table_name: str,
         schema: str | None = None,
         **kw: Any,
-    ):
+    ) -> list[str]:
         return []
 
     get_check_constraints = get_foreign_keys
