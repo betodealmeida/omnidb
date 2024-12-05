@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Definition List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        dt {
+            font-weight: bold;
+        }
+        dd {
+            margin: 0 0 10px 20px;
+        }
+    </style>
+</head>
+<body>
+    <pre>
+         O_      __)(
+       ,'  `.   (_".`.
+      :      :    /|`
+      |      |   ((|_  ,-.
+      ; -   /:  ,'  `:(( -\
+     /    -'  `: ____ \\\-:
+    _\__   ____|___  \____|_
+   ;    |:|        '-`      :
+  :_____|:|__________________:
+  ;     |:|                  :
+ :      |:|                   :
+ ;______ `'___________________:
+:                              :
+|______________________________|
+ `---.--------------------.---'
+     |____________________|
+     |                    |
+     |____________________|
+     |                    |
+   _\|_\|_\/(__\__)\__\//_|(_
+    </pre>
+    <h1>Available dialects</h1>
+    <ul>
+        {% for uri in uris %}
+        <li>{{ uri }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+
