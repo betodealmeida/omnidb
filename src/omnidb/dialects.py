@@ -3,9 +3,13 @@ from urllib.parse import quote
 
 import requests
 import sqlalchemy.types
+from firebolt_db.firebolt_dialect import FireboltDialect
+from pydruid.db.sqlalchemy import DruidHTTPSDialect
 from sqlalchemy.dialects.mssql.base import MSDialect
 from sqlalchemy.dialects.mysql.base import MySQLDialect
+from sqlalchemy.dialects.oracle.base import OracleDialect
 from sqlalchemy.dialects.postgresql.base import PGDialect
+from sqlalchemy.dialects.sqlite.base import SQLiteDialect
 from sqlalchemy.engine.base import Connection as SqlaConnection
 from sqlalchemy.engine.url import URL
 from sqlalchemy.sql.type_api import TypeEngine
@@ -20,6 +24,11 @@ __all__ = ["OmniPGDialect"]
 # map between SQLAlchemy backend and sqlglot/SQLAlchemy dialect
 DIALECT_MAP = {
     "postgresql": Dialects.POSTGRES,
+    "mssql": Dialects.TSQL,
+    "mysql": Dialects.MYSQL,
+    "oracle": Dialects.ORACLE,
+    "sqlite": Dialects.SQLITE,
+    # "druid": Dialects.DRUID,
 }
 
 
@@ -213,3 +222,35 @@ class OmniMySQLDialect(DialectOverride, MySQLDialect):
     """
 
     database_name = "MySQL"
+
+
+class OmniOracleDialect(DialectOverride, OracleDialect):
+    """
+    Oracle dialect with overrides.
+    """
+
+    database_name = "Oracle"
+
+
+class OmniSQLiteDialect(DialectOverride, SQLiteDialect):
+    """
+    SQLite dialect with overrides.
+    """
+
+    database_name = "SQLite"
+
+
+class OmniDruidDialect(DialectOverride, DruidHTTPSDialect):
+    """
+    Druid dialect with overrides.
+    """
+
+    database_name = "Druid"
+
+
+class OmniFireboltDialect(DialectOverride, FireboltDialect):
+    """
+    Firebolt dialect with overrides.
+    """
+
+    database_name = "Firebolt"

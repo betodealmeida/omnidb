@@ -12,6 +12,8 @@ dependencies = [
 
 [project.optional-dependencies]
 client = [
+    "firebolt-sqlalchemy>=1.0.3",
+    "pydruid>=0.6.9",
     "requests>=2.32.3",
 ]
 server = [
@@ -37,3 +39,7 @@ omnidb = "omnidb.app:main"
 "postgresql.omni" = "omnidb.dialects:OmniPGDialect"
 "mssql.omni" = "omnidb.dialects:OmniMSDialect"
 "mysql.omni" = "omnidb.dialects:OmniMySQLDialect"
+"oracle.omni" = "omnidb.dialects:OmniOracleDialect"
+"sqlite.omni" = "omnidb.dialects:OmniSQLiteDialect"
+"druid.omni" = "omnidb.dialects:OmniDruidDialect"
+"firebolt.omni" = "omnidb.dialects:OmniFireboltDialect"
