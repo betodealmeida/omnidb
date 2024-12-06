@@ -157,7 +157,7 @@ async def home() -> str:
         for dialect in sqlalchemy_dialects.values()
     }
 
-    return await render_template("dialects.html", uris=uris)
+    return await render_template("index.html", uris=uris)
 
 
 @app.route("/ping", methods=["GET", "HEAD"])

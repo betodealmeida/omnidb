@@ -4,6 +4,7 @@ from urllib.parse import quote
 import requests
 import sqlalchemy.types
 from sqlalchemy.dialects.mssql.base import MSDialect
+from sqlalchemy.dialects.mysql.base import MySQLDialect
 from sqlalchemy.dialects.postgresql.base import PGDialect
 from sqlalchemy.engine.base import Connection as SqlaConnection
 from sqlalchemy.engine.url import URL
@@ -204,3 +205,11 @@ class OmniMSDialect(DialectOverride, MSDialect):
     """
 
     database_name = "Microsoft SQL Server"
+
+
+class OmniMySQLDialect(DialectOverride, MySQLDialect):
+    """
+    MySQL dialect with overrides.
+    """
+
+    database_name = "MySQL"

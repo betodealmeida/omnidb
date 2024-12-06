@@ -419,37 +419,42 @@ name = "omnidb"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "sqlalchemy" },
+    { name = "sqlglot" },
+    { name = "yarl" },
+]
+
+[package.optional-dependencies]
+client = [
+    { name = "requests" },
+]
+server = [
     { name = "aiosqlite" },
     { name = "click" },
     { name = "pydantic" },
     { name = "quart" },
     { name = "quart-schema" },
-    { name = "requests" },
-    { name = "ruff" },
-    { name = "sqlalchemy" },
-    { name = "sqlglot" },
     { name = "uvicorn" },
-    { name = "yarl" },
 ]
 
 [package.dev-dependencies]
 dev = [
     { name = "pre-commit" },
     { name = "pyupgrade" },
+    { name = "ruff" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "aiosqlite", specifier = ">=0.20.0" },
-    { name = "click", specifier = ">=8.1.7" },
-    { name = "pydantic", specifier = ">=2.10.3" },
-    { name = "quart", specifier = ">=0.19.9" },
-    { name = "quart-schema", specifier = ">=0.20.0" },
-    { name = "requests", specifier = ">=2.32.3" },
-    { name = "ruff", specifier = ">=0.8.1" },
+    { name = "aiosqlite", marker = "extra == 'server'", specifier = ">=0.20.0" },
+    { name = "click", marker = "extra == 'server'", specifier = ">=8.1.7" },
+    { name = "pydantic", marker = "extra == 'server'", specifier = ">=2.10.3" },
+    { name = "quart", marker = "extra == 'server'", specifier = ">=0.19.9" },
+    { name = "quart-schema", marker = "extra == 'server'", specifier = ">=0.20.0" },
+    { name = "requests", marker = "extra == 'client'", specifier = ">=2.32.3" },
     { name = "sqlalchemy", specifier = ">=1.4.54" },
     { name = "sqlglot", specifier = ">=25.24.5" },
-    { name = "uvicorn", specifier = ">=0.32.1" },
+    { name = "uvicorn", marker = "extra == 'server'", specifier = ">=0.32.1" },
     { name = "yarl", specifier = ">=1.18.3" },
 ]
 
@@ -457,6 +462,7 @@ requires-dist = [
 dev = [
     { name = "pre-commit", specifier = ">=4.0.1" },
     { name = "pyupgrade", specifier = ">=3.19.0" },
+    { name = "ruff", specifier = ">=0.8.1" },
 ]
 
 [[package]]

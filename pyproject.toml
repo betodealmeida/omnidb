@@ -5,23 +5,29 @@ description = "A database for testing different SQL dialects"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "sqlalchemy>=1.4.54",
+    "sqlglot>=25.24.5",
+    "yarl>=1.18.3",
+]
+
+[project.optional-dependencies]
+client = [
+    "requests>=2.32.3",
+]
+server = [
     "aiosqlite>=0.20.0",
     "click>=8.1.7",
     "pydantic>=2.10.3",
     "quart-schema>=0.20.0",
     "quart>=0.19.9",
-    "requests>=2.32.3",
-    "ruff>=0.8.1",
-    "sqlalchemy>=1.4.54",
-    "sqlglot>=25.24.5",
     "uvicorn>=0.32.1",
-    "yarl>=1.18.3",
 ]
 
 [tool.uv]
 dev-dependencies = [
     "pre-commit>=4.0.1",
     "pyupgrade>=3.19.0",
+    "ruff>=0.8.1",
 ]
 
 [project.scripts]
@@ -30,3 +36,4 @@ omnidb = "omnidb.app:main"
 [project.entry-points."sqlalchemy.dialects"]
 "postgresql.omni" = "omnidb.dialects:OmniPGDialect"
 "mssql.omni" = "omnidb.dialects:OmniMSDialect"
+"mysql.omni" = "omnidb.dialects:OmniMySQLDialect"
