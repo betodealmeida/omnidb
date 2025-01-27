@@ -43,3 +43,7 @@ omnidb = "omnidb.app:main"
 "sqlite.omni" = "omnidb.dialects:OmniSQLiteDialect"
 "druid.omni" = "omnidb.dialects:OmniDruidDialect"
 "firebolt.omni" = "omnidb.dialects:OmniFireboltDialect"
+"fireboltv1.omni" = "omnidb.dialects:OmniFireboltV1Dialect"
+
+[project.entry-points."superset.db_engine_specs"]
+"fireboltv1" = "omnidb.dialects:FireboltV1EngineSpec"

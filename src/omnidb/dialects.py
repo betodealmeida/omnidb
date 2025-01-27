@@ -14,6 +14,8 @@ from sqlalchemy.engine.base import Connection as SqlaConnection
 from sqlalchemy.engine.url import URL
 from sqlalchemy.sql.type_api import TypeEngine
 from sqlglot.dialects.dialect import Dialects
+from superset.db_engine_specs.firebolt import FireboltEngineSpec
+from superset.sql.dialects.firebolt import Firebolt, FireboltOld
 
 from omnidb import dbapi
 from omnidb.dbapi.connection import Connection
@@ -28,7 +30,8 @@ DIALECT_MAP = {
     "mysql": Dialects.MYSQL,
     "oracle": Dialects.ORACLE,
     "sqlite": Dialects.SQLITE,
-    # "druid": Dialects.DRUID,
+    "firebolt": Firebolt,
+    "fireboltv1": FireboltOld,
 }
 
 
@@ -254,3 +257,16 @@ class OmniFireboltDialect(DialectOverride, FireboltDialect):
     """
 
     database_name = "Firebolt"
+
+
+class OmniFireboltV1Dialect(DialectOverride, FireboltDialect):
+    """
+    Firebolt dialect with overrides for the V1 API.
+    """
+
+    name = "fireboltv1"
+    database_name = "Firebolt (V1)"
+
+
+class FireboltV1EngineSpec(FireboltEngineSpec):
+    engine = "fireboltv1"
